@@ -1,0 +1,13 @@
+version: "3.4"
+
+services:
+  php:
+    image: php:8-apache
+    env_file: .env
+    ports:
+      - "8085:80"
+    volumes:
+      - "./entrypoint.sh:/entrypoint.sh:ro"
+      - "./html:/var/www/html:ro"
+    entrypoint: "/entrypoint.sh"
+    command: ""
