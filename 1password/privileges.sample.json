@@ -1,0 +1,34 @@
+[
+  {
+    "description": "Privileges for myApp",
+    "auth": "QPM8bgz4gme5jce.zwd",
+    "access": [
+      {
+        "vault": "myVault",
+        "items": [
+          "SMTP Username",
+          "SMTP Password"
+        ]
+      }
+    ]
+  },
+  {
+    "description": "Privileges for myOtherApp",
+    "auth": "ztk3gnj.PVC_xkj!jau",
+    "access": [
+      {
+        "vault": "myVault",
+        "items": [
+          "SMTP Username",
+          "SMTP Password"
+        ]
+      },
+      {
+        "vault": "myOtherVault",
+        "items": [
+          "Some Other Item"
+        ]
+      }
+    ]
+  }
+]

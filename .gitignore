@@ -1,0 +1,6 @@
+/*/.env
+/1password/privileges.json
+/1password/1password-credentials.json
+/1password/op-reverse-proxy/cert/*
+
+!.gitkeep
