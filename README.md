@@ -1,6 +1,17 @@
 # 1password-docker
 
-This allows your docker containers to securely retrieve credentials from your 1password vault.  Instead of putting `FOO="secretPwd"` in your `.env` file, you can use `FOO="OP:myVault:myItemName"`. This prevents passwords from being stored in plain-text within your env_file.  This also prevents attackers from capturing credentials by running the `printenv` command within your container shell.
+This allows your docker containers to securely retrieve credentials from your 1password vault.  Instead of putting `FOO="secretPwd"` in your `.env` file, you can use `FOO="OP:myVault:myItemName"`. This prevents passwords from being stored in plain-text within your env_file.  This also prevents attackers from capturing credentials by running the `printenv` command within your container shell. 
+
+Any process (your application) spawned from the entrypoint will see the environment variables with the values populated from 1password. Any process **not** spawned from the entrypoint (docker exec) will only see the 1password vault references. Because of this, no application changes are required.
+
+## Before:
+![Alt text](/sample-app/screenshots/1a.jpg?raw=true)
+![Alt text](/sample-app/screenshots/1b.jpg?raw=true)
+
+## After:
+![Alt text](/sample-app/screenshots/2a.jpg?raw=true)
+![Alt text](/sample-app/screenshots/2b.jpg?raw=true)
+
 
 ## Instructions:
 
