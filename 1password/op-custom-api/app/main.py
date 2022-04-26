@@ -23,10 +23,10 @@ def get_password():
 	f = open('/privileges.json')
 	privileges = json.load(f)
 	PRIV_DATA = jmespath.search('[?auth==`{}`] | [0]'.format(auth), privileges)
-	if PRIV_DATA is None: return("Authentication Failed")
+	if PRIV_DATA is None: return("ERROR: Authentication Failed")
 	ITEMS_ALLOWED = jmespath.search('access[?vault==`{}`] | [0].items'.format(vault_name), PRIV_DATA)
-	if ITEMS_ALLOWED is None: return("Access denied")
-	if item_title not in ITEMS_ALLOWED: return("Access denied")
+	if ITEMS_ALLOWED is None: return("ERROR: Access denied")
+	if item_title not in ITEMS_ALLOWED: return("ERROR: Access denied")
 
 	# GET VAULT ID
 	r = requests.get(url = "{}/v1/vaults".format(OP_ENDPOINT), headers={'Authorization': 'Bearer {}'.format(OP_API_TOKEN)})
