@@ -13,10 +13,13 @@ OP_API_TOKEN = os.getenv('OP_API_TOKEN')
 @app.route('/get-password', methods=['GET', 'POST'])
 def get_password():
 	# GET REQUEST DATA
-	request_data = request.json
-	auth = request_data["auth"]
-	vault_name = request_data["vault_name"]
-	item_title = request_data["item_title"]
+	try:
+		request_data = request.json
+		auth = request_data["auth"]
+		vault_name = request_data["vault_name"]
+		item_title = request_data["item_title"]
+	except:
+		return "You must pass the 'auth', 'vault_name', and 'item_title' in the POST request"
 
 	# VALIDATE AUTH
 	f = open('/privileges.json')
@@ -31,16 +34,22 @@ def get_password():
 	r = requests.get(url = "{}/v1/vaults".format(OP_ENDPOINT), headers={'Authorization': 'Bearer {}'.format(OP_API_TOKEN)})
 	VAULT_RESPONSE = r.json()
 	VAULT_ID = jmespath.search('[?name==`{}`] | [0].id'.format(vault_name), VAULT_RESPONSE)
+	if VAULT_ID is None:
+		return "ERROR: Unable to get the vault id for '{}'".format(vault_name)
 
 	# GET ITEM ID
 	r = requests.get(url = "{}/v1/vaults/{}/items".format(OP_ENDPOINT, VAULT_ID), headers={'Authorization': 'Bearer {}'.format(OP_API_TOKEN)})
 	ITEMS_RESPONSE = r.json()
 	ITEM_ID = jmespath.search('[?title==`{}`] | [0].id'.format(item_title), ITEMS_RESPONSE)
+	if ITEM_ID is None:
+		return "ERROR: Unable to get the item id for '{}'".format(item_title)
 
 	# GET ITEM PASSWORD VALUE
 	r = requests.get(url = "{}/v1/vaults/{}/items/{}".format(OP_ENDPOINT, VAULT_ID, ITEM_ID), headers={'Authorization': 'Bearer {}'.format(OP_API_TOKEN)})
 	ITEM_RESPONSE = r.json()
 	ITEM_PASSWORD = jmespath.search('fields[?id==`password`] | [0].value', ITEM_RESPONSE)
+	if ITEM_PASSWORD is None:
+		return "ERROR: Unable to get value for '{}'".format(item_title)
 
 	# RETURN ITEM PASSWORD VALUE
 	return ITEM_PASSWORD
