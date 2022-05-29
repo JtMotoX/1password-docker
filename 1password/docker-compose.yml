@@ -24,7 +24,7 @@ services:
     volumes:
       - "./op-custom-api/app:/app:ro"
       - "./privileges.json:/privileges.json"
-    entrypoint: sh -c "pip install -r /app/requirements.txt && /app/main.py"
+    entrypoint: sh -c "pip install -r /app/requirements.txt && gunicorn --bind 0.0.0.0:5000 --reload app.wsgi:app"
     depends_on:
       - op-connect-api
 

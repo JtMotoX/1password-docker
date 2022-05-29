@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 from flask import Flask, json, request
-from waitress import serve
 import requests
 import jmespath
 import os
@@ -48,4 +47,4 @@ def get_password():
 
 
 if __name__ == "__main__":
-	serve(app, host='0.0.0.0', port=5000, url_scheme='https')
+	app.run(host='0.0.0.0')
