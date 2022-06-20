@@ -6,18 +6,21 @@ volumes:
 services:
   op-connect-api:
     image: 1password/connect-api:latest
+    restart: always
     volumes:
       - "./1password-credentials.json:/home/opuser/.op/1password-credentials.json"
       - "data:/home/opuser/.op/data"
 
   op-connect-sync:
     image: 1password/connect-sync:latest
+    restart: always
     volumes:
       - "./1password-credentials.json:/home/opuser/.op/1password-credentials.json"
       - "data:/home/opuser/.op/data"
 
   op-custom-api:
     image: python:3.10-alpine
+    restart: always
     env_file: .env
     environment:
       OP_ENDPOINT: "http://op-connect-api:8080"
@@ -30,6 +33,7 @@ services:
 
   op-reverse-proxy:
     image: nginx:1.21-alpine
+    restart: always
     ports:
       - "5000:443"
     volumes:
