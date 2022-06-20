@@ -19,40 +19,52 @@ def get_password():
 		vault_name = request_data["vault_name"]
 		item_title = request_data["item_title"]
 	except:
-		return "You must pass the 'auth', 'vault_name', and 'item_title' in the POST request"
+		return {"error":"You must pass the 'auth', 'vault_name', and 'item_title' in the POST request"}
 
 	# VALIDATE AUTH
-	f = open('/privileges.json')
-	privileges = json.load(f)
-	PRIV_DATA = jmespath.search('[?auth==`{}`] | [0]'.format(auth), privileges)
-	if PRIV_DATA is None: return("ERROR: Authentication Failed")
-	ITEMS_ALLOWED = jmespath.search('access[?vault==`{}`] | [0].items'.format(vault_name), PRIV_DATA)
-	if ITEMS_ALLOWED is None: return("ERROR: Access denied")
-	if item_title not in ITEMS_ALLOWED: return("ERROR: Access denied")
+	try:
+		f = open('/privileges.json')
+		privileges = json.load(f)
+		PRIV_DATA = jmespath.search('[?auth==`{}`] | [0]'.format(auth), privileges)
+		if PRIV_DATA is None: return({"error":"Authentication Failed"})
+		ITEMS_ALLOWED = jmespath.search('access[?vault==`{}`] | [0].items'.format(vault_name), PRIV_DATA)
+		if ITEMS_ALLOWED is None: return({"error":"Access denied"})
+		if item_title not in ITEMS_ALLOWED: return({"error":"Access denied"})
+	except:
+		return {"error":"There was an issue attempting to authenticate"}
 
 	# GET VAULT ID
-	r = requests.get(url = "{}/v1/vaults".format(OP_ENDPOINT), headers={'Authorization': 'Bearer {}'.format(OP_API_TOKEN)})
-	VAULT_RESPONSE = r.json()
-	VAULT_ID = jmespath.search('[?name==`{}`] | [0].id'.format(vault_name), VAULT_RESPONSE)
-	if VAULT_ID is None:
-		return "ERROR: Unable to get the vault id for '{}'".format(vault_name)
+	try:
+		r = requests.get(url = "{}/v1/vaults".format(OP_ENDPOINT), headers={'Authorization': 'Bearer {}'.format(OP_API_TOKEN)})
+		VAULT_RESPONSE = r.json()
+		VAULT_ID = jmespath.search('[?name==`{}`] | [0].id'.format(vault_name), VAULT_RESPONSE)
+		if VAULT_ID is None:
+			return {"error":"Unable to get the vault id for '{}'".format(vault_name)}
+	except:
+		return {"error":"There was an issue attempting to get the vault id"}
 
 	# GET ITEM ID
-	r = requests.get(url = "{}/v1/vaults/{}/items".format(OP_ENDPOINT, VAULT_ID), headers={'Authorization': 'Bearer {}'.format(OP_API_TOKEN)})
-	ITEMS_RESPONSE = r.json()
-	ITEM_ID = jmespath.search('[?title==`{}`] | [0].id'.format(item_title), ITEMS_RESPONSE)
-	if ITEM_ID is None:
-		return "ERROR: Unable to get the item id for '{}'".format(item_title)
+	try:
+		r = requests.get(url = "{}/v1/vaults/{}/items".format(OP_ENDPOINT, VAULT_ID), headers={'Authorization': 'Bearer {}'.format(OP_API_TOKEN)})
+		ITEMS_RESPONSE = r.json()
+		ITEM_ID = jmespath.search('[?title==`{}`] | [0].id'.format(item_title), ITEMS_RESPONSE)
+		if ITEM_ID is None:
+			return {"error":"Unable to get the item id for '{}'".format(item_title)}
+	except:
+		return {"error":"There was an issue attempting to get the item id"}
 
 	# GET ITEM PASSWORD VALUE
-	r = requests.get(url = "{}/v1/vaults/{}/items/{}".format(OP_ENDPOINT, VAULT_ID, ITEM_ID), headers={'Authorization': 'Bearer {}'.format(OP_API_TOKEN)})
-	ITEM_RESPONSE = r.json()
-	ITEM_PASSWORD = jmespath.search('fields[?id==`password`] | [0].value', ITEM_RESPONSE)
-	if ITEM_PASSWORD is None:
-		return "ERROR: Unable to get value for '{}'".format(item_title)
+	try:
+		r = requests.get(url = "{}/v1/vaults/{}/items/{}".format(OP_ENDPOINT, VAULT_ID, ITEM_ID), headers={'Authorization': 'Bearer {}'.format(OP_API_TOKEN)})
+		ITEM_RESPONSE = r.json()
+		ITEM_PASSWORD = jmespath.search('fields[?id==`password`] | [0].value', ITEM_RESPONSE)
+		if ITEM_PASSWORD is None:
+			return {"error":"Unable to get value for '{}'".format(item_title)}
+	except:
+		return {"error":"There was an issue attempting to get the password value"}
 
 	# RETURN ITEM PASSWORD VALUE
-	return ITEM_PASSWORD
+	return {"password":ITEM_PASSWORD}
 
 
 if __name__ == "__main__":

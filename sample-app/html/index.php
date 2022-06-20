@@ -27,7 +27,9 @@
 		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 		$result = curl_exec($ch);
 		curl_close($ch);
-		echo "$result";
+		// echo "$result";
+		$json = json_decode($result, true);
+		echo $json['password'];
 		?>
 	</div>
 </body>
