@@ -19,7 +19,7 @@ services:
       - "data:/home/opuser/.op/data"
 
   op-custom-api:
-    image: python:3.10-alpine
+    build: ./op-custom-api
     restart: always
     env_file: .env
     environment:
@@ -27,12 +27,12 @@ services:
     volumes:
       - "./op-custom-api/app:/app:ro"
       - "./privileges.json:/privileges.json"
-    entrypoint: sh -c "pip install -r /app/requirements.txt && gunicorn --bind 0.0.0.0:5000 --reload app.wsgi:app"
     depends_on:
       - op-connect-api
 
   op-reverse-proxy:
     image: nginx:1.21-alpine
+    user: "999:999"
     restart: always
     ports:
       - "5000:443"
