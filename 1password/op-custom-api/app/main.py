@@ -19,19 +19,19 @@ def get_password():
 		vault_name = request_data["vault_name"]
 		item_title = request_data["item_title"]
 	except:
-		return {"error":"You must pass the 'auth', 'vault_name', and 'item_title' in the POST request"}
+		return {"error":"1Password - You must pass the 'auth', 'vault_name', and 'item_title' in the POST request"}
 
 	# VALIDATE AUTH
 	try:
 		f = open('/privileges.json')
 		privileges = json.load(f)
 		PRIV_DATA = jmespath.search('[?auth==`{}`] | [0]'.format(auth), privileges)
-		if PRIV_DATA is None: return({"error":"Authentication Failed"})
+		if PRIV_DATA is None: return({"error":"1Password - Authentication Failed"})
 		ITEMS_ALLOWED = jmespath.search('access[?vault==`{}`] | [0].items'.format(vault_name), PRIV_DATA)
-		if ITEMS_ALLOWED is None: return({"error":"Access denied"})
-		if item_title not in ITEMS_ALLOWED: return({"error":"Access denied"})
+		if ITEMS_ALLOWED is None: return({"error":"1Password - Access denied(1)"})
+		if item_title not in ITEMS_ALLOWED: return({"error":"1Password - Access denied(2)"})
 	except:
-		return {"error":"There was an issue attempting to authenticate"}
+		return {"error":"1Password - There was an issue attempting to authenticate"}
 
 	# GET VAULT ID
 	try:
@@ -39,9 +39,9 @@ def get_password():
 		VAULT_RESPONSE = r.json()
 		VAULT_ID = jmespath.search('[?name==`{}`] | [0].id'.format(vault_name), VAULT_RESPONSE)
 		if VAULT_ID is None:
-			return {"error":"Unable to get the vault id for '{}'".format(vault_name)}
+			return {"error":"1Password - Unable to get the vault id for '{}'".format(vault_name)}
 	except:
-		return {"error":"There was an issue attempting to get the vault id"}
+		return {"error":"1Password - There was an issue attempting to get the vault id"}
 
 	# GET ITEM ID
 	try:
@@ -49,9 +49,9 @@ def get_password():
 		ITEMS_RESPONSE = r.json()
 		ITEM_ID = jmespath.search('[?title==`{}`] | [0].id'.format(item_title), ITEMS_RESPONSE)
 		if ITEM_ID is None:
-			return {"error":"Unable to get the item id for '{}'".format(item_title)}
+			return {"error":"1Password - Unable to get the item id for '{}'".format(item_title)}
 	except:
-		return {"error":"There was an issue attempting to get the item id"}
+		return {"error":"1Password - There was an issue attempting to get the item id"}
 
 	# GET ITEM PASSWORD VALUE
 	try:
@@ -59,9 +59,9 @@ def get_password():
 		ITEM_RESPONSE = r.json()
 		ITEM_PASSWORD = jmespath.search('fields[?id==`password`] | [0].value', ITEM_RESPONSE)
 		if ITEM_PASSWORD is None:
-			return {"error":"Unable to get value for '{}'".format(item_title)}
+			return {"error":"1Password - Unable to get value for '{}'".format(item_title)}
 	except:
-		return {"error":"There was an issue attempting to get the password value"}
+		return {"error":"1Password - There was an issue attempting to get the password value"}
 
 	# RETURN ITEM PASSWORD VALUE
 	return {"password":ITEM_PASSWORD}
