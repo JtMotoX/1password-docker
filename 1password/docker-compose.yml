@@ -31,7 +31,7 @@ services:
       - op-connect-api
 
   op-reverse-proxy:
-    image: nginx:1.23-alpine
+    image: nginx:latest
     user: "999:999"
     restart: always
     ports:
