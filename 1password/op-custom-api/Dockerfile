@@ -5,6 +5,7 @@ FROM chainguard/wolfi-base:latest AS base
 ARG PYTHON_VERSION
 RUN apk add --no-cache python-${PYTHON_VERSION}
 ARG WORKDIR=/app
+ENV PATH="${WORKDIR}/.venv/bin:${PATH}"
 WORKDIR ${WORKDIR}
 
 FROM astral/uv:${UV_VERSION} AS uv_binary
@@ -19,4 +20,4 @@ RUN --mount=from=uv_binary,source=/uv,target=/bin/uv \
 FROM base AS final
 COPY --from=builder ${WORKDIR} .
 USER 999:999
-CMD [ "gunicorn", "--bind", "0.0.0.0:5000", "--reload", "app.wsgi:app" ]
+CMD [ "gunicorn" ]
