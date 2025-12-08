@@ -18,6 +18,7 @@ services:
 
   op-custom-api:
     build: ./op-custom-api
+    image: 1password/connect-sync:local
     restart: always
     env_file: .env
     environment:
