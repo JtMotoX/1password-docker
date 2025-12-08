@@ -1,0 +1,9 @@
+services:
+  op-custom-api:
+    build: ./op-custom-api
+    image: 1password/connect-sync:local
+    volumes:
+      - "./op-custom-api/app:/app:ro"
+      - "/app/.venv"
+    command: >
+      gunicorn --reload

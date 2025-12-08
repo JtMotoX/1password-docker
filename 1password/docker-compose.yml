@@ -17,15 +17,12 @@ services:
       - "data:/home/opuser/.op/data"
 
   op-custom-api:
-    build: ./op-custom-api
-    image: 1password/connect-sync:local
+    image: 1password/connect-sync:latest
     restart: always
     env_file: .env
     environment:
       OP_ENDPOINT: "http://op-connect-api:8080"
     volumes:
-      - "./op-custom-api/app:/app:ro"
-      - "/app/.venv"
       - "./privileges.json:/privileges.json"
     depends_on:
       - op-connect-api
