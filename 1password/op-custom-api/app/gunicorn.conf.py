@@ -4,7 +4,7 @@
 bind = "0.0.0.0:5000"
 reload = False
 
-# Optional extras you might want later:
+# Optional configuration
 workers = 4
 threads = 2
 timeout = 30
