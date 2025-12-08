@@ -12,10 +12,13 @@ FROM astral/uv:${UV_VERSION} AS uv_binary
 
 FROM base AS builder
 ARG UV_LINK_MODE=copy
-COPY ./app .
+ARG UV_PYTHON_DOWNLOADS=0
 RUN --mount=from=uv_binary,source=/uv,target=/bin/uv \
     --mount=type=cache,target=/root/.cache/uv \
+    --mount=type=bind,source=./app/uv.lock,target=uv.lock \
+    --mount=type=bind,source=./app/pyproject.toml,target=pyproject.toml \
     uv sync --locked --no-editable --no-dev --compile-bytecode
+COPY ./app .
 
 FROM base AS final
 COPY --from=builder ${WORKDIR} .
