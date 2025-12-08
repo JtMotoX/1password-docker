@@ -25,6 +25,7 @@ services:
       OP_ENDPOINT: "http://op-connect-api:8080"
     volumes:
       - "./op-custom-api/app:/app:ro"
+      - "/app/.venv"
       - "./privileges.json:/privileges.json"
     depends_on:
       - op-connect-api
